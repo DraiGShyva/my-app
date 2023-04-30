@@ -32,9 +32,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.all(Radius.circular(widget.radius)),
               boxShadow: const [
                 BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 5.0,
-                    blurStyle: BlurStyle.outer)
+                  color: Colors.white,
+                  blurRadius: 5.0,
+                  spreadRadius: 3.0,
+                )
               ]),
           child: widget.isPassword == true
               ? TextField(
