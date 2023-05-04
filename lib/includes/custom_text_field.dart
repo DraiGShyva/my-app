@@ -19,23 +19,23 @@ class CustomTextField extends StatefulWidget {
 }
 
 bool _isObscure = true;
-IconData _off = Icons.visibility_off;
-IconData _on = Icons.visibility;
+Icon _off = const Icon(Icons.visibility_off);
+Icon _on = const Icon(Icons.visibility);
 
 class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(top: 15.0),
       child: Container(
           decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(widget.radius)),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.white,
-                  blurRadius: 5.0,
-                  spreadRadius: 3.0,
-                )
+                    color: Color.fromARGB(255, 255, 245, 217),
+                    blurRadius: 3.0,
+                    offset: Offset(2.5, -2.5))
               ]),
           child: widget.isPassword == true
               ? TextField(
@@ -50,7 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           onPressed: () {
                             setState(() => _isObscure = !_isObscure);
                           },
-                          icon: Icon(_isObscure == true ? _off : _on))),
+                          icon: _isObscure == true ? _off : _on)),
                   controller: widget.controller,
                 )
               : TextField(
