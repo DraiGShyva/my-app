@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/account_data.dart';
 import '../data/text_field_controller.dart';
 import '../includes/custom_button.dart';
 import '../includes/custom_text_field.dart';
@@ -13,6 +14,11 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  bool emailNotify = false;
+  bool usernameNotify = false;
+  bool passwordNotify = false;
+  bool cofirmPasswordNotify = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,24 +50,69 @@ class _SignupPageState extends State<SignupPage> {
                           child: Column(
                             children: [
                               CustomTextField(
-                                  labelText: 'Email',
-                                  hintText: 'Enter email',
-                                  controller: emailController),
+                                labelText: 'Email',
+                                hintText: 'Enter email',
+                                controller: Controller.email,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Visibility(
+                                      visible: emailNotify,
+                                      child: const Text(
+                                          'The email is not empty!')),
+                                ],
+                              ),
                               CustomTextField(
-                                  labelText: 'Username',
-                                  hintText: 'Enter username',
-                                  controller: usernameController),
+                                labelText: 'Username',
+                                hintText: 'Enter username',
+                                controller: Controller.username,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Visibility(
+                                      visible: usernameNotify,
+                                      child: const Text(
+                                          'The username is not empty!')),
+                                ],
+                              ),
                               CustomTextField(
                                 labelText: 'Password',
                                 hintText: 'Enter password',
-                                controller: passwordController,
+                                controller: Controller.password,
                                 isPassword: true,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Visibility(
+                                      visible: passwordNotify,
+                                      child: const Text(
+                                          'The password is not empty!')),
+                                ],
                               ),
                               CustomTextField(
                                 labelText: 'Confirm password',
                                 hintText: 'Enter the password again',
-                                controller: checkPassController,
+                                controller: Controller.confirmPassword,
                                 isPassword: true,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Visibility(
+                                      visible: cofirmPasswordNotify,
+                                      child: const Text(
+                                          'The confirm password is not empty!')),
+                                  Visibility(
+                                      visible: (Controller.password.text !=
+                                              Controller.confirmPassword.text &&
+                                          Controller
+                                              .confirmPassword.text.isNotEmpty),
+                                      child: const Text(
+                                          'Confirm password does not match!'))
+                                ],
                               ),
                             ],
                           ),
@@ -70,7 +121,33 @@ class _SignupPageState extends State<SignupPage> {
                           padding:
                               const EdgeInsets.only(top: 15.0, bottom: 15.0),
                           child: CustomButton(
-                              name: 'Register', center: true, onPressed: () {}),
+                              name: 'Register',
+                              center: true,
+                              onPressed: () {
+                                Controller.clearController;
+                                setState(() {
+                                  emailNotify = Controller.email.text.isEmpty;
+                                  usernameNotify =
+                                      Controller.username.text.isEmpty;
+                                  passwordNotify =
+                                      Controller.password.text.isEmpty;
+                                  cofirmPasswordNotify =
+                                      Controller.confirmPassword.text.isEmpty;
+                                });
+                                if (Controller.password.text ==
+                                        Controller.confirmPassword.text &&
+                                    Controller.password.text.isNotEmpty) {
+                                  Authen.username = Controller.username.text;
+                                  Authen.password = Controller.password.text;
+                                  Controller.clearController;
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SigninPage()),
+                                      (route) => false);
+                                }
+                              }),
                         ),
                         CustomButton(
                             text: 'Do you already have an account? ',
@@ -79,6 +156,7 @@ class _SignupPageState extends State<SignupPage> {
                             color: Colors.blue,
                             colorButton: Colors.transparent,
                             onPressed: () {
+                              Controller.clearController();
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
@@ -90,6 +168,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 5),
               ]),
             ),
           )),

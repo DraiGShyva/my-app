@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 
+bool _isObscure = true;
+Icon _off = const Icon(Icons.visibility_off);
+Icon _on = const Icon(Icons.visibility);
+
 class CustomTextField extends StatefulWidget {
   final bool isPassword;
-  final String labelText;
   final String hintText;
+  final String? labelText;
   final double radius;
   final TextEditingController controller;
-  const CustomTextField(
-      {super.key,
-      this.isPassword = false,
-      this.labelText = '',
-      required this.controller,
-      this.hintText = '',
-      this.radius = 10.0});
+  const CustomTextField({
+    super.key,
+    this.isPassword = false,
+    this.labelText,
+    required this.hintText,
+    required this.controller,
+    this.radius = 10.0,
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
-
-bool _isObscure = true;
-Icon _off = const Icon(Icons.visibility_off);
-Icon _on = const Icon(Icons.visibility);
 
 class _CustomTextFieldState extends State<CustomTextField> {
   @override

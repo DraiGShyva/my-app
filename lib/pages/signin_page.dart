@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/account_data.dart';
 import '../data/text_field_controller.dart';
 import '../includes/custom_button.dart';
 import '../includes/custom_text_field.dart';
@@ -14,6 +15,8 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
+  bool usernameNotify = false;
+  bool passwordNotify = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,14 +48,40 @@ class _SigninPageState extends State<SigninPage> {
                           child: Column(
                             children: [
                               CustomTextField(
-                                  labelText: 'Username',
-                                  hintText: 'Enter username',
-                                  controller: usernameController),
+                                labelText: 'Username',
+                                hintText: 'Enter username',
+                                controller: Controller.username,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10, height: 10),
+                                  Visibility(
+                                      visible: usernameNotify,
+                                      child: const Text(
+                                          'The username is not empty!')),
+                                ],
+                              ),
                               CustomTextField(
                                 labelText: 'Password',
                                 hintText: 'Enter password',
-                                controller: passwordController,
+                                controller: Controller.password,
                                 isPassword: true,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10, height: 10),
+                                  Visibility(
+                                      visible: passwordNotify,
+                                      child: const Text(
+                                          'The password is not empty!')),
+                                  Visibility(
+                                      visible: Controller.password.text !=
+                                              Authen.password &&
+                                          Controller
+                                              .confirmPassword.text.isNotEmpty,
+                                      child: const Text(
+                                          'Password does not match!'))
+                                ],
                               ),
                             ],
                           ),
@@ -64,11 +93,24 @@ class _SigninPageState extends State<SigninPage> {
                               name: 'Login',
                               center: true,
                               onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const HomePage()),
-                                    (route) => false);
+                                setState(() {
+                                  usernameNotify =
+                                      Controller.username.text.isEmpty;
+                                  passwordNotify =
+                                      Controller.password.text.isEmpty;
+                                });
+                                if (Authen.username ==
+                                        Controller.username.text &&
+                                    Authen.password ==
+                                        Controller.password.text) {
+                                  Controller.clearController;
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePage()),
+                                      (route) => false);
+                                }
                               }),
                         ),
                         CustomButton(
@@ -78,11 +120,12 @@ class _SigninPageState extends State<SigninPage> {
                             color: Colors.blue,
                             colorButton: Colors.transparent,
                             onPressed: () {
-                              Navigator.pushAndRemoveUntil(
+                              Controller.clearController();
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const SignupPage()),
-                                  (route) => false);
+                                      builder: (context) =>
+                                          const SignupPage()));
                             }),
                         CustomButton(
                             text: 'Forgot password? ',
@@ -90,12 +133,15 @@ class _SigninPageState extends State<SigninPage> {
                             center: true,
                             color: Colors.blue,
                             colorButton: Colors.transparent,
-                            onPressed: () {}),
+                            onPressed: () {
+                              Controller.clearController();
+                            }),
                         const SizedBox(height: 20.0),
                       ],
                     ),
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 5),
               ]),
             ),
           )),
