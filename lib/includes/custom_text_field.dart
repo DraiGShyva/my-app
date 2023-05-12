@@ -27,22 +27,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0),
+      padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
       child: Container(
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(widget.radius)),
               boxShadow: const [
                 BoxShadow(
-                    color: Color.fromARGB(255, 255, 245, 217),
-                    blurRadius: 3.0,
-                    offset: Offset(2.5, -2.5))
+                    color: Color.fromARGB(255, 94, 147, 255),
+                    offset: Offset(1.5, 2.5))
               ]),
           child: widget.isPassword == true
               ? TextField(
                   obscureText: _isObscure,
                   decoration: InputDecoration(
-                      labelText: widget.labelText,
                       hintText: widget.hintText,
                       border: OutlineInputBorder(
                           borderRadius:
@@ -56,7 +54,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 )
               : TextField(
                   decoration: InputDecoration(
-                      labelText: widget.labelText,
                       hintText: widget.hintText,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(

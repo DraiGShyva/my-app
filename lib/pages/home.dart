@@ -1,7 +1,7 @@
 import 'package:app/includes/custom_button.dart';
 import 'package:flutter/material.dart';
 
-import 'signin_page.dart';
+import 'login/signin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,18 +33,21 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: Drawer(
-        child: Column(
+        child: Stack(
           children: [
-            CustomButton(
-                name: 'Logout',
-                center: true,
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SigninPage()),
-                      (route) => false);
-                }),
+            Container(
+              alignment: Alignment.bottomLeft,
+              child: CustomButton(
+                  name: 'Logout',
+                  center: true,
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SigninPage()),
+                        (route) => false);
+                  }),
+            ),
           ],
         ),
       ),

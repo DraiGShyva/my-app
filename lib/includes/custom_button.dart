@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
   final double size;
   final double radius;
   final bool center;
+
   const CustomButton({
     super.key,
     this.name = '',

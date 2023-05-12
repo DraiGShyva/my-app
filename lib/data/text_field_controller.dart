@@ -8,6 +8,7 @@ class Controller {
 
   static void clearController() {
     email.clear();
+    username.clear();
     password.clear();
     confirmPassword.clear();
   }
