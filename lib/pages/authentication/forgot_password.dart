@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '/data/account_data.dart';
-import '/data/text_field_controller.dart';
-import '/includes/custom_button.dart';
-import '/includes/custom_text_field.dart';
+
+import 'package:app/models/authentication/custom_text_field.dart';
+import 'package:app/models/authentication/custom_button.dart';
+import 'package:app/models/authentication/text_field_controller.dart';
+
 import 'change_password.dart';
 import 'signin.dart';
 
@@ -34,20 +36,26 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       Controller.clearController;
       setState(() {
         emailNotify = Controller.email.text.isEmpty;
-        usernameNotify = Controller.username.text.isEmpty;
       });
-      if (Controller.email.text == Authen.email &&
-          Controller.username.text == Authen.username) {
-        Controller.clearController;
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ChangePasswordPage()));
+      for (final key in Authen.account.keys) {
+        if (Controller.email.text == Authen.account[key]['email']) {
+          Controller.clearController;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChangePasswordPage(keyAccount: key)));
+          break;
+        } else if (key == Authen.account.keys.last) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Email are incorrect!'),
+            ),
+          );
+        }
       }
     }
 
     return scaffold(context, [
-      const SizedBox(height: 20.0),
       Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
         child: Column(
@@ -65,19 +73,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     child: const Text('The email is not empty!')),
               ],
             ),
-            CustomTextField(
-              labelText: 'Username',
-              hintText: 'Enter username',
-              controller: Controller.username,
-            ),
-            Row(
-              children: [
-                const SizedBox(width: 10),
-                Visibility(
-                    visible: usernameNotify,
-                    child: const Text('The username is not empty!')),
-              ],
-            ),
           ],
         ),
       ),
@@ -93,7 +88,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           color: Colors.white,
           colorButton: Colors.transparent,
           onPressed: routeSignIn),
-      const SizedBox(height: 20.0),
     ]);
   }
 }

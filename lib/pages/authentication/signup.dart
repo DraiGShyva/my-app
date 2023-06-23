@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:app/models/authentication/custom_text_field.dart';
+import 'package:app/models/authentication/custom_button.dart';
+import 'package:app/models/authentication/text_field_controller.dart';
+
 import '/data/account_data.dart';
-import '/data/text_field_controller.dart';
-import '/includes/custom_button.dart';
-import '/includes/custom_text_field.dart';
+
 import 'signin.dart';
 
 class SignupPage extends StatefulWidget {
@@ -30,24 +32,33 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     registerButton() {
-      Controller.clearController;
       setState(() {
         emailNotify = Controller.email.text.isEmpty;
         usernameNotify = Controller.username.text.isEmpty;
         passwordNotify = Controller.password.text.isEmpty;
         cofirmPasswordNotify = Controller.confirmPassword.text.isEmpty;
       });
-      if (Controller.password.text == Controller.confirmPassword.text &&
-          Controller.password.text.isNotEmpty) {
-        Authen.username = Controller.username.text;
-        Authen.password = Controller.password.text;
-        Controller.clearController;
-        routeSignIn;
+      if (Authen.account.containsValue(Controller.email.text) &&
+          Authen.account.containsValue(Controller.email.text)) {
+        if (Controller.password.text == Controller.confirmPassword.text &&
+            Controller.password.text.isNotEmpty) {
+          Authen.createAccount({
+            'email': Controller.email.text,
+            'username': Controller.username.text,
+            'password': Controller.password.text,
+          });
+          routeSignIn();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email or username already exist!'),
+          ),
+        );
       }
     }
 
     return scaffold(context, [
-      const SizedBox(height: 20.0),
       Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
         child: Column(
@@ -126,7 +137,6 @@ class _SignupPageState extends State<SignupPage> {
           color: Colors.white,
           colorButton: Colors.transparent,
           onPressed: routeSignIn),
-      const SizedBox(height: 20.0),
     ]);
   }
 }

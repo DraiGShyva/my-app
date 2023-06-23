@@ -1,13 +1,14 @@
-
 import 'package:flutter/material.dart';
 
 import '/data/account_data.dart';
-import '/data/text_field_controller.dart';
-import '/includes/custom_button.dart';
-import '/includes/custom_text_field.dart';
+
+import 'package:app/models/authentication/custom_text_field.dart';
+import 'package:app/models/authentication/custom_button.dart';
+import 'package:app/models/authentication/text_field_controller.dart';
+
 import 'forgot_password.dart';
-import '../home.dart';
 import 'signup.dart';
+import '../home.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
@@ -19,20 +20,39 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   bool usernameNotify = false;
   bool passwordNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Authen.getAccount();
+  }
+
   @override
   Widget build(BuildContext context) {
     loginButton() {
+      Authen.getAccount();
       setState(() {
         usernameNotify = Controller.username.text.isEmpty;
         passwordNotify = Controller.password.text.isEmpty;
       });
-      if (Authen.username == Controller.username.text &&
-          Authen.password == Controller.password.text) {
-        Controller.clearController();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false);
+      if (!(usernameNotify && passwordNotify)) {
+        for (final key in Authen.account.keys) {
+          if (Authen.account[key]['username'] == Controller.username.text &&
+              Authen.account[key]['password'] == Controller.password.text) {
+            Controller.clearController();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+                (route) => false);
+            break;
+          } else if (key == Authen.account.keys.last) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Username or password are incorrect!'),
+              ),
+            );
+          }
+        }
       }
     }
 
@@ -49,7 +69,6 @@ class _SigninPageState extends State<SigninPage> {
     }
 
     return scaffold(context, [
-      const SizedBox(height: 20.0),
       Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
         child: Column(
@@ -80,7 +99,8 @@ class _SigninPageState extends State<SigninPage> {
                     visible: passwordNotify,
                     child: const Text('The password is not empty!')),
                 Visibility(
-                    visible: Controller.password.text != Authen.password &&
+                    visible: Controller.password.text !=
+                            Authen.account['password'] &&
                         Controller.confirmPassword.text.isNotEmpty,
                     child: const Text('Password does not match!'))
               ],
@@ -107,33 +127,44 @@ class _SigninPageState extends State<SigninPage> {
           color: Colors.white,
           colorButton: Colors.transparent,
           onPressed: routeForgotPassword),
-      const SizedBox(height: 20.0),
     ]);
   }
 }
 
 scaffold(context, List<Widget> widgets) {
+  final Size screenSize = MediaQuery.of(context).size;
+  final double widgetSize = screenSize.width < screenSize.height
+      ? screenSize.width
+      : screenSize.height;
   return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 176, 231, 255),
-    body: SingleChildScrollView(
-      child: Column(children: [
-        SizedBox(height: MediaQuery.of(context).size.height / 10),
-        const FlutterLogo(size: 100),
-        SizedBox(height: MediaQuery.of(context).size.height / 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-          child: Ink(
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(204, 0, 89, 255),
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: Colors.blue)),
-            child: Column(
-              children: widgets,
+    body: Stack(children: [
+      Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/background.jpg'), fit: BoxFit.cover)),
+      ),
+      Material(
+        color: Colors.transparent,
+        child: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: widgetSize * 0.05, right: widgetSize * 0.05),
+              child: Ink(
+                padding: EdgeInsets.only(
+                    top: widgetSize * 0.1, bottom: widgetSize * 0.02),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(132, 9, 95, 255),
+                    borderRadius: BorderRadius.circular(30.0),
+                    border: Border.all(color: Colors.blue)),
+                child: Column(
+                  children: widgets,
+                ),
+              ),
             ),
-          ),
+          ]),
         ),
-        SizedBox(height: MediaQuery.of(context).size.height / 5),
-      ]),
-    ),
+      ),
+    ]),
   );
 }
